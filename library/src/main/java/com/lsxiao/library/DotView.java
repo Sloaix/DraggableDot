@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -62,14 +63,15 @@ public class DotView extends View {
         return calCirclePoint(mFixedCircle, mDragCircle);
     }
 
-    private PointF calCirclePoint(Circle first, Circle second) {
+    public static PointF calCirclePoint(Circle first, Circle second) {
         //计算两圆心之间的距离
         //计算FixedCircle切点到DragCircle圆心的长
-        final float maxSizeLength = first.lengthBetweenCenter(second);
-        final float rightSideLength = getRightAngleSideLength(maxSizeLength, first.mRadius);
-        //计算angle
-        float cosAngle = rightSideLength / maxSizeLength;
-        float sinAngle = first.mRadius / maxSizeLength;
+//        final float maxSizeLength = first.lengthBetweenCenter(second);
+//        final float rightSideLength = getRightAngleSideLength(maxSizeLength, first.mRadius);
+        //angle
+        float cosAngle = 0;
+        float sinAngle = 1;
+
         return first.getPointOnCircle(cosAngle, sinAngle);
     }
 
@@ -80,14 +82,14 @@ public class DotView extends View {
      * @param otherRightAngleSideLength 另外一个直角边
      * @return
      */
-    public float getRightAngleSideLength(float maxSizeLength, float otherRightAngleSideLength) {
-        return (float) Math.sqrt(Math.pow(maxSizeLength, 2) + Math.pow(otherRightAngleSideLength, 2));
+    public static float getRightAngleSideLength(float maxSizeLength, float otherRightAngleSideLength) {
+        return (float) Math.sqrt(Math.pow(maxSizeLength, 2) - Math.pow(otherRightAngleSideLength, 2));
     }
 
     /**
      * 圆
      */
-    class Circle {
+    public static class Circle {
         //圆心
         PointF mCenter;
         //半径
@@ -145,6 +147,45 @@ public class DotView extends View {
          */
         public float lengthBetweenCenter(Circle circle) {
             return PointF.length(circle.mCenter.x, circle.mCenter.y);
+        }
+    }
+
+    public static class Line {
+        PointF mPointA;
+        PointF mPointB;
+
+        public Line(PointF pointA, PointF pointB) {
+            mPointA = pointA;
+            mPointB = pointB;
+        }
+
+        public Line(float pax, float pay, float pbx, float pby) {
+            this(new PointF(pax, pay), new PointF(pbx, pby));
+        }
+
+        /**
+         * 计算并返回两直线的交点
+         * 经过A(a,b)B(c,d)直线的一般式(d-b)x-(c-a)y-a(d-b)+b(c-a)=0
+         * 经过A(a,b)B(c,d)直线的一般式(d-b)x-(c-a)y=a(d-b)-b(c-a)
+         *
+         * @param line Line
+         * @return PointF
+         */
+        public PointF intersectionPoint(Line line) {
+            //利用行列式求解
+            float a1 = line.mPointB.y - line.mPointA.y;
+            float a2 = mPointA.y - mPointB.y;
+            float b1 = line.mPointA.x - line.mPointB.x;
+            float b2 = mPointB.x - mPointA.x;
+            float c1 = line.mPointA.x * a1 - line.mPointA.y * b1;
+            float c2 = mPointA.x * a2 - mPointA.y * b2;
+
+            float x = (c1 * b2 - c2 * b1) / (a1 * b2 - a2 * b1);
+            float y = (a1 * c2 - a2 * c1) / (a1 * b2 - a2 * b1);
+
+            Log.d("xls", "x = " + -x);
+            Log.d("xls", "y = " + -y);
+            return new PointF(-x, -y);
         }
     }
 
