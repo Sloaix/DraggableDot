@@ -17,7 +17,8 @@ public class CircleTest extends AndroidTestCase {
         super.setUp();
         mFixedCir = new DotView.Circle(0f, 0f, 3f);
         mDragCir = new DotView.Circle(4f, 3f, 3f);
-        p = DotView.calCirclePoint(mFixedCir, mDragCir);
+//        p = DotView.calCirclePoint(mFixedCir, mDragCir);
+//        Log.d("xls",Math.toDegrees(Math.asin(0.5))+"");
     }
 
     public void testLengthBetweenCenter() throws Exception {
@@ -33,6 +34,6 @@ public class CircleTest extends AndroidTestCase {
 
     public void testRightAngleSizeLength() throws Exception {
         //勾三股四弦五
-        assertEquals(DotView.getRightAngleSideLength(5, 3), 4f);
+        assertEquals(DotView.getLegLength(5, 3), 4f);
     }
 }

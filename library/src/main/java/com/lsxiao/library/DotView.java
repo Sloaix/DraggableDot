@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -42,6 +43,17 @@ public class DotView extends View {
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(2);
         mPaint.setColor(Color.BLACK);
+
+        mFixedCircle = new Circle(200, 200, 40);
+        mDragCircle = new Circle(400, 300, 20);
+
+        mFixedPointA = calCirclePoint(mFixedCircle, mDragCircle, true, true);
+        mDragPointA = calCirclePoint(mFixedCircle, mDragCircle, false, true);
+        mOperationPointA = new PointF((mFixedPointA.x + mDragPointA.x) / 2, (mFixedPointA.y + mDragPointA.y) / 2);
+
+        mFixedPointB = calCirclePoint(mFixedCircle, mDragCircle, true, false);
+        mDragPointB = calCirclePoint(mFixedCircle, mDragCircle, false, false);
+        mOperationPointB = new PointF((mFixedPointB.x + mDragPointB.x) / 2, (mFixedPointB.y + mDragPointB.y) / 2);
     }
 
     @Override
@@ -52,38 +64,67 @@ public class DotView extends View {
 
     private void drawCircle(Canvas canvas) {
 
+        mFixedCircle.draw(canvas, mPaint);
+        mDragCircle.draw(canvas, mPaint);
+        Path path = new Path();
+        path.moveTo(mFixedPointA.x, mFixedPointA.y);
+        path.quadTo(mOperationPointA.x, mOperationPointA.y, mDragPointA.x, mDragPointA.y);
+        canvas.drawPath(path, mPaint);
+
+        path = new Path();
+        path.moveTo(mFixedPointB.x, mFixedPointB.y);
+        path.quadTo(mOperationPointB.x, mOperationPointB.y, mDragPointB.x, mDragPointB.y);
+        canvas.drawPath(path, mPaint);
         //计算fixed圆上的点A
         //计算fixed圆上的点B
         //计算drag圆上的点A
         //计算drag圆上的点B
-
+        System.out.println(mFixedPointA.x + "  " + mFixedPointA.y);
+        System.out.println(mDragPointA.x + "  " + mDragPointA.y);
+        System.out.println(mOperationPointA.x + "  " + mOperationPointA.y);
     }
 
-    private PointF calFixedPointA() {
-        return calCirclePoint(mFixedCircle, mDragCircle);
+    /**
+     * @param fixed     固定的圆
+     * @param drag      拖动的圆
+     * @param isOnFixed 点是否在固定的圆上
+     * @return PointF
+     */
+    public static PointF calCirclePoint(Circle fixed, Circle drag, boolean isOnFixed, boolean isCutAngle) {
+        //三角形斜边
+        final float hypotenuse = fixed.lengthBetweenCenter(drag);
+        //三角形直角边
+        final float leg = isOnFixed ? fixed.mRadius : drag.mRadius;
+        //计算sin
+        float sin = leg / hypotenuse;
+        //计算弧度
+        double radians = Math.asin(sin);
+        if (!isCutAngle) {
+            radians = Math.toRadians(180) - radians;
+        }
+        //返回圆上一点
+        return isOnFixed ? fixed.getPoint(radians) : drag.getPoint(-radians);
     }
 
-    public static PointF calCirclePoint(Circle first, Circle second) {
-        //计算两圆心之间的距离
-        //计算FixedCircle切点到DragCircle圆心的长
-//        final float maxSizeLength = first.lengthBetweenCenter(second);
-//        final float rightSideLength = getRightAngleSideLength(maxSizeLength, first.mRadius);
-        //angle
-        float cosAngle = 0;
-        float sinAngle = 1;
-
-        return first.getPointOnCircle(cosAngle, sinAngle);
-    }
+//    public static PointF calOperationPoint(Circle fixed, Circle drag) {
+//        //中心点之间的距离
+//        final float distance = fixed.lengthBetweenCenter(drag);
+//        //
+//        float ratio = fixed.mRadius / distance;
+//        float x = ratio * distance + fixed.mCenter.x;
+//        float y = ratio * fixed.mRadius + fixed.mCenter.y;
+//        return null;
+//    }
 
     /**
      * 计算直角边的长度
      *
-     * @param maxSizeLength             斜边
-     * @param otherRightAngleSideLength 另外一个直角边
-     * @return
+     * @param hypotenuse 斜边
+     * @param otherLeg   另外一个直角边
+     * @return float
      */
-    public static float getRightAngleSideLength(float maxSizeLength, float otherRightAngleSideLength) {
-        return (float) Math.sqrt(Math.pow(maxSizeLength, 2) - Math.pow(otherRightAngleSideLength, 2));
+    public static float getLegLength(float hypotenuse, float otherLeg) {
+        return (float) Math.sqrt(Math.pow(hypotenuse, 2) - Math.pow(otherLeg, 2));
     }
 
     /**
@@ -111,32 +152,31 @@ public class DotView extends View {
         /**
          * 获取圆上一点x坐标值
          *
-         * @param cosAngle cos角度
+         * @param radians cos角度
          * @return x of the point
          */
-        public float getPointXOnCircle(float cosAngle) {
-            return mRadius * cosAngle + mCenter.x;
+        public float getPx(double radians) {
+            return mRadius * (float) Math.sin(radians) + mCenter.x;
         }
 
         /**
          * 获取圆上一点y坐标值
          *
-         * @param sinAngle sin角度
+         * @param radians sin角度
          * @return y of the point
          */
-        public float getPointYOnCircle(float sinAngle) {
-            return mRadius * sinAngle + mCenter.y;
+        public float getPy(double radians) {
+            return mRadius * (float) Math.cos(radians) + mCenter.y;
         }
 
         /**
          * 获取圆上一点
          *
-         * @param cosAngle
-         * @param sinAngle
-         * @return
+         * @param radians 弧度值
+         * @return PointF
          */
-        public PointF getPointOnCircle(float cosAngle, float sinAngle) {
-            return new PointF(getPointXOnCircle(cosAngle), getPointYOnCircle(sinAngle));
+        public PointF getPoint(double radians) {
+            return new PointF(getPx(radians), getPy(radians));
         }
 
         /**
