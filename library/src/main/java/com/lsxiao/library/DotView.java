@@ -2,6 +2,7 @@ package com.lsxiao.library;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -20,7 +21,11 @@ public class DotView extends View {
     Circle mFixedCircle;
     //画笔
     Paint mPaint;
+
     Activity mActivity;
+
+    private int mSize;
+    int mHintColor;
 
     public DotView(Context context) {
         this(context, null);
@@ -28,6 +33,28 @@ public class DotView extends View {
 
     public DotView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
+    }
+
+
+    public DotView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        final TypedArray a = context.getTheme().obtainStyledAttributes(
+                attrs,
+                R.styleable.DotView,
+                0, 0);
+
+        try {
+            mSize = a.getDimensionPixelOffset(R.styleable.DotView_size, 20);
+            mHintColor = a.getColor(R.styleable.DotView_hit_color, Color.RED);
+        } finally {
+            a.recycle();
+        }
+        mPaint = new Paint();
+        mPaint.setColor(mHintColor);
+        mPaint.setAntiAlias(true);
+        mPaint.setStyle(Paint.Style.FILL);
+
+        mFixedCircle = new Circle(mSize / 2, mSize / 2, mSize / 2);
     }
 
     public void init(Activity activity) {
@@ -51,20 +78,13 @@ public class DotView extends View {
         }
     }
 
-    public DotView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        mPaint = new Paint();
-        mPaint.setStrokeWidth(2);
-        mPaint.setColor(Color.BLACK);
-        mPaint.setStyle(Paint.Style.FILL);
-
-        mFixedCircle = new Circle(200, 200, 20);
-    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int measureSpec = MeasureSpec.makeMeasureSpec(mSize, MeasureSpec.EXACTLY);
+        setMeasuredDimension(measureSpec, measureSpec);
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DotView">
+        <attr name="size" format="dimension" />
+        <attr name="hit_color" format="color" />
+    </declare-styleable>
+</resources>
