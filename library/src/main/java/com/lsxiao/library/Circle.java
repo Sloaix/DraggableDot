@@ -80,7 +80,7 @@ public class Circle {
      * @param circle Circle
      * @return float
      */
-    public float lengthBetweenCenter(Circle circle) {
+    public float distanceToOtherCircle(Circle circle) {
         return (float) Math.abs(Math.sqrt(Math.pow(circle.mCenter.x - mCenter.x, 2) + Math.pow(circle.mCenter.y - mCenter.y, 2)));
     }
 
@@ -90,5 +90,9 @@ public class Circle {
                 "mCenter= [" + mCenter.x + "," + mCenter.y + "]" +
                 ", mRadius=" + mRadius +
                 '}';
+    }
+
+    public static Circle copy(Circle circle) {
+        return new Circle(circle.mCenter.x, circle.mCenter.y, circle.mRadius);
     }
 }
