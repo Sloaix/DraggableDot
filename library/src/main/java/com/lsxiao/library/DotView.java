@@ -1,6 +1,5 @@
 package com.lsxiao.library;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -9,8 +8,6 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 /**
  * author:lsxiao
@@ -21,8 +18,7 @@ public class DotView extends View {
     Circle mFixedCircle;
     //画笔
     Paint mPaint;
-
-    Activity mActivity;
+    float mMaxStretchLength;
 
     private int mSize;
     int mHintColor;
@@ -46,36 +42,20 @@ public class DotView extends View {
         try {
             mSize = a.getDimensionPixelOffset(R.styleable.DotView_size, 20);
             mHintColor = a.getColor(R.styleable.DotView_hit_color, Color.RED);
+            mMaxStretchLength = a.getDimensionPixelOffset(R.styleable.DotView_max_stretch_length, 400);
         } finally {
             a.recycle();
         }
         mPaint = new Paint();
-        mPaint.setColor(mHintColor);
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
 
         mFixedCircle = new Circle(mSize / 2, mSize / 2, mSize / 2);
     }
 
-    public void init(Activity activity) {
-        mActivity = activity;
-        DraggableLayout draggableLayout = new DraggableLayout(mActivity);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        draggableLayout.setLayoutParams(params);
-
-        ViewGroup contentView = (ViewGroup) activity.findViewById(android.R.id.content);
-        View child = contentView.getChildAt(0);
-        contentView.removeView(child);
-        draggableLayout.addView(child);
-        contentView.addView(draggableLayout);
-    }
-
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (mActivity == null) {
-            throw new IllegalArgumentException("the activity is null,you must init first");
-        }
     }
 
 
@@ -105,5 +85,13 @@ public class DotView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         mFixedCircle.draw(canvas, mPaint);
+    }
+
+    public float getMaxStretchLength() {
+        return mMaxStretchLength;
+    }
+
+    public void setMaxStretchLength(float maxStretchLength) {
+        mMaxStretchLength = maxStretchLength;
     }
 }
