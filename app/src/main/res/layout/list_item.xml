@@ -18,6 +18,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        app:hit_color="@android:color/black"
-        app:size="20dp"/>
+        android:text="20"
+        android:textColor="@android:color/white"
+        android:textSize="12dp"
+        app:circle_color="@android:color/black"
+        app:radius="10dp"/>
 </LinearLayout>
