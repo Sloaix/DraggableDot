@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="DotView">
-        <attr name="size" format="dimension"/>
-        <attr name="hit_color" format="color"/>
+        <attr name="radius" format="dimension"/>
+        <attr name="circle_color" format="color"/>
         <attr name="max_stretch_length" format="dimension"/>
     </declare-styleable>
 </resources>
