@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -87,7 +88,6 @@ public class DotView extends TextView {
         if (sDraggableLayout == null) {
             sDraggableLayout = findDraggableLayout();
         }
-        sDraggableLayout.addDot(this);
     }
 
     @Override
@@ -102,17 +102,19 @@ public class DotView extends TextView {
         super.onDraw(canvas);
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            sDraggableLayout.preDrawDrag(this, ev);
+        }
+        return super.onTouchEvent(ev);
+    }
+
     public float getMaxStretchLength() {
         return mMaxStretchLength;
     }
 
     public void setMaxStretchLength(float maxStretchLength) {
         mMaxStretchLength = maxStretchLength;
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        sDraggableLayout.removeDot(this);
     }
 }

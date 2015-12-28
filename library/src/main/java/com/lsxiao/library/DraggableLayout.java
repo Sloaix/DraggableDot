@@ -13,15 +13,11 @@ import android.graphics.PointF;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.FrameLayout;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * author:lsxiao
@@ -44,7 +40,6 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
     PointF mPointMid;
     Paint mPaint;
     Path mPath;
-    private List<DotView> mDotViewList;
 
     float mStartPosX;
     float mStartPosY;
@@ -64,10 +59,6 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
 
     PointFEvaluator mPointFEvaluator;
 
-    public static boolean mCanProcess = false;
-
-    private int mCurAnimateCircle = -1;
-
     private enum State {
         IDLE,//停止状态
         STRETCH,//拉伸状态
@@ -77,20 +68,6 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
         DRAG,//拖动状态
         DISMISSING,//消失中状态
         DISMISSED//消失状态
-    }
-
-    public void addDot(DotView dotView) {
-        if (mDotViewList == null) {
-            mDotViewList = new ArrayList<>();
-        }
-        mDotViewList.add(dotView);
-    }
-
-    public void removeDot(DotView dotView) {
-        if (mDotViewList == null) {
-            mDotViewList = new ArrayList<>();
-        }
-        mDotViewList.remove(dotView);
     }
 
     public DraggableLayout(Context context) {
@@ -152,33 +129,6 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
 
         //the path which used to draw bezierCurve
         mPath = new Path();
-
-        if (mDotViewList == null) {
-            mDotViewList = new ArrayList<>();
-        }
-    }
-
-    private DotView getTouchedDotView(MotionEvent event) {
-        for (DotView dotView : mDotViewList) {
-            int[] location = new int[2];
-            dotView.getLocationOnScreen(location);
-            final int w = dotView.getMeasuredWidth();
-            final int h = dotView.getMeasuredHeight();
-            int posX = (int) event.getRawX();
-            int posY = (int) event.getRawY();
-
-            int lowerX = location[0];
-            int upperX = w + location[0];
-
-            int lowerY = location[1];
-            int upperY = h + location[1];
-
-            final boolean isTouched = (posX > lowerX && posX < upperX && posY > lowerY && posY < upperY);
-            if (isTouched) {
-                return dotView;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -273,20 +223,9 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
      * @return true, if need to intercept the event.
      */
     private boolean handleIntercept(MotionEvent event) {
-        if (mTouchedDot == null) {
-            mTouchedDot = getTouchedDotView(event);
-        } else {
-            DotView curTouchDot = getTouchedDotView(event);
-            if (curTouchDot != null && curTouchDot != mTouchedDot) {
-                setState(State.IDLE);
-            }
-            mTouchedDot = curTouchDot;
-        }
-
         if (mTouchedDot == null || mTouchedDot.getVisibility() != VISIBLE) {
             return super.onInterceptTouchEvent(event);
         }
-        mCanProcess = true;
         initCircle();
         return true;
     }
@@ -354,17 +293,9 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
      * @return true, if consume the event,and start to drag.
      */
     private boolean processTouchEvent(MotionEvent ev) {
-        Log.d("xls", ev.getAction() + "");
         boolean processed;
-        if (!mCanProcess) {
-            return false;
-        }
         final int action = ev.getAction();
         switch (action) {
-            case MotionEvent.ACTION_DOWN: {
-                processed = processActionDown(ev);
-                break;
-            }
             case MotionEvent.ACTION_MOVE: {
                 processed = processMove(ev);
                 break;
@@ -380,7 +311,6 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
             default: {
                 processed = false;
             }
-
         }
         invalidate();
         return processed;
@@ -398,12 +328,16 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
      * @param ev MotionEvent
      */
     private boolean processActionDown(MotionEvent ev) {
-        saveStartMotion(ev);
-        saveLastMotion(ev);
+        mLastPosX = ev.getRawX();
+        mLastPosY = ev.getRawY();
         mLastLengthBetweenCenter = 0;
         return true;
     }
 
+    public void preDrawDrag(DotView dotView, MotionEvent ev) {
+        mTouchedDot = dotView;
+        processActionDown(ev);
+    }
 
     /**
      * 处理move事件
@@ -418,7 +352,6 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
         mDragCircle.mCenter.x += dx;
         mDragCircle.mCenter.y += dy;
         updateFixedCircleRadius();
-
         switch (mState) {
             case IDLE: {
                 /**do prepare for ready to stretch*/
@@ -461,25 +394,37 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
     private boolean processActionUp(MotionEvent ev) {
         switch (mState) {
             case IDLE: {
+                mTouchedDot = null;
                 break;
             }
             case STRETCH: {
                 setState(State.DRAG_MOVE_TO_ORIGIN);
-                animate(State.DRAG_MOVE_TO_ORIGIN);
+                animate(State.DRAG_MOVE_TO_ORIGIN, new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        setState(State.IDLE);
+                        invalidate();
+                        showDotView();
+                        mTouchedDot = null;
+                    }
+                });
                 break;
             }
             case DRAG: {
                 setState(State.DISMISSING);
-                animate(State.DISMISSING);
+                animate(State.DISMISSING, new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        setState(State.IDLE);
+                        mTouchedDot = null;
+                    }
+                });
                 break;
             }
             case DISMISSED: {
                 //回调事件
                 setState(State.IDLE);
                 break;
-            }
-            default: {
-
             }
         }
         return false;
@@ -551,10 +496,14 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
         mOriginCircle = Circle.copy(mFixedCircle);
     }
 
+    private void animate(State state) {
+        animate(state, null);
+    }
+
     /**
      * the dot will be back the origin position by animate.
      */
-    private void animate(State state) {
+    private void animate(State state, Animator.AnimatorListener animatorListener) {
         if (mPointAnimator != null && mPointAnimator.isRunning()) {
             return;
         }
@@ -571,18 +520,23 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
                 mPointAnimator.setDuration(200);
                 mPointAnimator.setInterpolator(new FastOutSlowInInterpolator());
                 mPointAnimator.addUpdateListener(this);
-                mPointAnimator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
+                if (animatorListener == null) {
+                    mPointAnimator.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        setState(State.DRAG);
-                        invalidate();
-                    }
-                });
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            setState(State.DRAG);
+                            invalidate();
+                        }
+                    });
+                } else {
+                    mPointAnimator.addListener(animatorListener);
+                }
+
                 break;
             }
             case FIXED_MOVE_TO_ORIGIN: {
@@ -592,18 +546,22 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
                 mPointAnimator.setDuration(200);
                 mPointAnimator.setInterpolator(new FastOutSlowInInterpolator());
                 mPointAnimator.addUpdateListener(this);
-                mPointAnimator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
+                if (animatorListener == null) {
+                    mPointAnimator.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        setState(State.STRETCH);
-                        invalidate();
-                    }
-                });
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            setState(State.STRETCH);
+                            invalidate();
+                        }
+                    });
+                } else {
+                    mPointAnimator.addListener(animatorListener);
+                }
                 break;
             }
             case DRAG_MOVE_TO_ORIGIN: {
@@ -612,19 +570,23 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
                 mPointAnimator.setDuration(200);
                 mPointAnimator.setInterpolator(new FastOutSlowInInterpolator());
                 mPointAnimator.addUpdateListener(this);
-                mPointAnimator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
+                if (animatorListener == null) {
+                    mPointAnimator.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        setState(State.IDLE);
-                        invalidate();
-                        showDotView();
-                    }
-                });
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            setState(State.IDLE);
+                            invalidate();
+                            showDotView();
+                        }
+                    });
+                } else {
+                    mPointAnimator.addListener(animatorListener);
+                }
                 break;
             }
             case DISMISSING: {
@@ -632,18 +594,22 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
                 mPointAnimator.setDuration(200);
                 mPointAnimator.setInterpolator(new AnticipateOvershootInterpolator());
                 mPointAnimator.addUpdateListener(this);
-                mPointAnimator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
+                if (animatorListener == null) {
+                    mPointAnimator.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        setState(State.DISMISSED);
-                        invalidate();
-                    }
-                });
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            setState(State.DISMISSED);
+                            invalidate();
+                        }
+                    });
+                } else {
+                    mPointAnimator.addListener(animatorListener);
+                }
                 //开始dismiss动画
                 break;
             }
@@ -654,7 +620,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
 
     @Override
     public void onAnimationUpdate(ValueAnimator valueAnimator) {
-        Log.d("xls", mState.name());
+//        Log.d("xls", mState.name());
         switch (mState) {
             case FIXED_MOVE_TO_DRAG: {
                 mFixedCircle.mCenter = (PointF) valueAnimator.getAnimatedValue();
