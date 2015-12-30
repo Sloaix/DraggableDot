@@ -49,6 +49,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
 
     float mLastLengthBetweenCenter;
 
+    private boolean mCanIntercept = false;
 
     private State mState = State.IDLE;
 
@@ -216,6 +217,10 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
         return processTouchEvent(ev);
     }
 
+    public void setCanIntercept(boolean canIntercept) {
+        mCanIntercept = canIntercept;
+    }
+
     /**
      * handle whether intercept the event.only intercept event when dot is visible and touched.
      *
@@ -223,6 +228,9 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
      * @return true, if need to intercept the event.
      */
     private boolean handleIntercept(MotionEvent event) {
+        if (!mCanIntercept) {
+            return false;
+        }
         if (mTouchedDot == null || mTouchedDot.getVisibility() != VISIBLE) {
             return super.onInterceptTouchEvent(event);
         }
@@ -247,6 +255,15 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
      */
     private float getLengthBetweenCenter() {
         return mFixedCircle.distanceToOtherCircle(mDragCircle);
+    }
+
+
+    private void reset() {
+        setState(State.IDLE);
+        showDotView();
+        initCircle();
+        postInvalidate();
+        mTouchedDot = null;
     }
 
     /**
@@ -293,23 +310,17 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
      * @return true, if consume the event,and start to drag.
      */
     private boolean processTouchEvent(MotionEvent ev) {
-        boolean processed;
+        boolean processed = true;
         final int action = ev.getAction();
         switch (action) {
             case MotionEvent.ACTION_MOVE: {
                 processed = processMove(ev);
                 break;
             }
-            case MotionEvent.ACTION_UP: {
-                processed = processActionUp(ev);
-                break;
-            }
+            case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL: {
-                processed = processActionCancel(ev);
+                processActionUp(ev);
                 break;
-            }
-            default: {
-                processed = false;
             }
         }
         invalidate();
@@ -391,7 +402,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
      *
      * @param ev MotionEvent
      */
-    private boolean processActionUp(MotionEvent ev) {
+    private void processActionUp(MotionEvent ev) {
         switch (mState) {
             case IDLE: {
                 mTouchedDot = null;
@@ -402,10 +413,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
                 animate(State.DRAG_MOVE_TO_ORIGIN, new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        setState(State.IDLE);
-                        invalidate();
-                        showDotView();
-                        mTouchedDot = null;
+                        reset();
                     }
                 });
                 break;
@@ -415,45 +423,16 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
                 animate(State.DISMISSING, new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        setState(State.IDLE);
-                        mTouchedDot = null;
+                        reset();
                     }
                 });
                 break;
             }
             case DISMISSED: {
-                //回调事件
-                setState(State.IDLE);
                 break;
             }
         }
-        return false;
-    }
-
-    /**
-     * 处理ActionCancel事件
-     *
-     * @param ev MotionEvent
-     */
-    private boolean processActionCancel(MotionEvent ev) {
-        switch (mState) {
-            case IDLE: {
-                break;
-            }
-            case STRETCH: {
-                setState(State.DRAG_MOVE_TO_ORIGIN);
-                break;
-            }
-            case DRAG: {
-                setState(State.DISMISSING);
-                break;
-            }
-            case DISMISSED: {
-                setState(State.IDLE);
-                break;
-            }
-        }
-        return false;
+        mCanIntercept = false;
     }
 
 
@@ -530,7 +509,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             setState(State.DRAG);
-                            invalidate();
+                            postInvalidate();
                         }
                     });
                 } else {
@@ -556,7 +535,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             setState(State.STRETCH);
-                            invalidate();
+                            postInvalidate();
                         }
                     });
                 } else {
@@ -579,9 +558,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
 
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            setState(State.IDLE);
-                            invalidate();
-                            showDotView();
+                            reset();
                         }
                     });
                 } else {
@@ -604,7 +581,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             setState(State.DISMISSED);
-                            invalidate();
+                            postInvalidate();
                         }
                     });
                 } else {
@@ -643,7 +620,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
                 break;
             }
         }
-        invalidate();
+        postInvalidate();
     }
 
     /**
