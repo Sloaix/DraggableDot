@@ -74,7 +74,7 @@ public class DotView extends TextView {
         return null;
     }
 
-    public Circle getCopyCicle() {
+    public Circle getCopyCircle() {
         return Circle.copy(mCircle);
     }
 
@@ -103,11 +103,15 @@ public class DotView extends TextView {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-            sDraggableLayout.preDrawDrag(this, ev);
+    public boolean onTouchEvent(MotionEvent e) {
+        if (e.getAction() == MotionEvent.ACTION_DOWN) {
+            float rawX = e.getRawX();
+            float rawY = e.getRawY();
+            sDraggableLayout.preDrawDrag(DotView.this, rawX, rawY);
+            sDraggableLayout.setCanIntercept(true);
+            return true;
         }
-        return super.onTouchEvent(ev);
+        return false;
     }
 
     public float getMaxStretchLength() {
