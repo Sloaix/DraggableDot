@@ -106,8 +106,10 @@ public class DotView extends TextView {
     public boolean onTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             sDraggableLayout.preDrawDrag(this, ev);
+            sDraggableLayout.setCanIntercept(true);
+            return true;
         }
-        return super.onTouchEvent(ev);
+        return false;
     }
 
     public float getMaxStretchLength() {
