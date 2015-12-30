@@ -74,9 +74,6 @@ public class DotView extends TextView {
         return null;
     }
 
-    public Circle getCopyCicle() {
-        return Circle.copy(mCircle);
-    }
 
     @Override
     protected void onAttachedToWindow() {
