@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,12 +19,13 @@ import android.widget.TextView;
  * date:2015/12/23 19:01
  */
 public class DotView extends TextView {
-    static DraggableLayout sDraggableLayout;
-    Circle mCircle;
-    Paint mPaint;
-    float mMaxStretchLength;
+    private static DraggableLayout sDraggableLayout;
+    private Circle mBgCircle;
+    private Paint mPaint;
+    private float mLimitStretchLength;
     private int mRadius;
-    int mCircleColor;
+    private int mCircleColor;
+    private onDotStateChangedListener mOnDotStateChangedListener;
 
     public DotView(Context context) {
         this(context, null);
@@ -39,26 +41,42 @@ public class DotView extends TextView {
                 attrs,
                 R.styleable.DotView,
                 0, 0);
-
         try {
-            mRadius = a.getDimensionPixelOffset(R.styleable.DotView_radius, 40);
-            mCircleColor = a.getColor(R.styleable.DotView_circle_color, Color.RED);
-            mMaxStretchLength = a.getDimensionPixelOffset(R.styleable.DotView_max_stretch_length, 400);
+            mRadius = a.getDimensionPixelOffset(R.styleable.DotView_xls_radius, dp2px(20));
+            mCircleColor = a.getColor(R.styleable.DotView_xls_circle_color, Color.RED);
+            mLimitStretchLength = a.getDimensionPixelOffset(R.styleable.DotView_xls_max_stretch_length, dp2px(150));
         } finally {
             a.recycle();
         }
         init();
     }
 
+    private int dp2px(int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
+    }
+
+    /**
+     * initialize some local variables.
+     */
     private void init() {
         setGravity(Gravity.CENTER);
         setDrawingCacheEnabled(true);
+
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
+        mPaint.setColor(mCircleColor);
         mPaint.setStyle(Paint.Style.FILL);
-        mCircle = new Circle(mRadius, mRadius, mRadius);
+
+        mBgCircle = new Circle(mRadius, mRadius, mRadius);
+
+        mOnDotStateChangedListener = new SimpleDotStateChangedListener();
     }
 
+    /**
+     * to find the draggableLayout instance layout in the view tree.
+     *
+     * @return null, if don't find,else return DraggableLayout instance.
+     */
     public DraggableLayout findDraggableLayout() {
         Activity activity = (Activity) getContext();
         ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
@@ -74,16 +92,22 @@ public class DotView extends TextView {
         return null;
     }
 
-
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (!(getContext() instanceof Activity)) {
-            throw new IllegalArgumentException("you must provide a activity as context");
+
+        //if is preview mode,then don't need draggableLayout instance.
+        if (isInEditMode()) {
+            return;
         }
 
+        //retrieve the draggable instance.
         if (sDraggableLayout == null) {
             sDraggableLayout = findDraggableLayout();
+
+            if (sDraggableLayout == null) {
+                throw new IllegalArgumentException("the draggableLayout isn't be attached to view tree,you must invoke the attach method of DraggableLayout");
+            }
         }
     }
 
@@ -95,13 +119,13 @@ public class DotView extends TextView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        mCircle.draw(canvas, mPaint);
+        mBgCircle.draw(canvas, mPaint);
         super.onDraw(canvas);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN && isEnabled()) {
             sDraggableLayout.preDrawDrag(this, ev);
             sDraggableLayout.setCanIntercept(true);
             return true;
@@ -109,11 +133,48 @@ public class DotView extends TextView {
         return false;
     }
 
-    public float getMaxStretchLength() {
-        return mMaxStretchLength;
+    public float getLimitStretchLength() {
+        return mLimitStretchLength;
     }
 
-    public void setMaxStretchLength(float maxStretchLength) {
-        mMaxStretchLength = maxStretchLength;
+
+    public onDotStateChangedListener getOnDotStateChangedListener() {
+        return mOnDotStateChangedListener;
     }
+
+    public void setOnDotStateChangedListener(onDotStateChangedListener onDotStateChangedListener) {
+        mOnDotStateChangedListener = onDotStateChangedListener;
+    }
+
+    /**
+     * the callback interface.
+     */
+    public interface onDotStateChangedListener {
+        void onStretch(DotView dotView);
+
+        void onDrag(DotView dotView);
+
+        void onDismissed(DotView dotView);
+    }
+
+    /**
+     * the simple callback implement.
+     */
+    public class SimpleDotStateChangedListener implements onDotStateChangedListener {
+        @Override
+        public void onStretch(DotView dotView) {
+            //do nothing.
+        }
+
+        @Override
+        public void onDrag(DotView dotView) {
+            //do nothing.
+        }
+
+        @Override
+        public void onDismissed(DotView dotView) {
+            //do nothing.
+        }
+    }
+
 }
