@@ -15,7 +15,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
-        DraggableLayout.attach(this);
+        DraggableLayout.attachToActivity(this);
         afterCreate(savedInstanceState);
     }
 
