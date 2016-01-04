@@ -19,7 +19,7 @@ import android.widget.TextView;
  * date:2015/12/23 19:01
  */
 public class DotView extends TextView {
-    private static DraggableLayout sDraggableLayout;
+    private DraggableLayout mDraggableLayout;
     private Circle mBgCircle;
     private Paint mPaint;
     private float mLimitStretchLength;
@@ -42,9 +42,9 @@ public class DotView extends TextView {
                 R.styleable.DotView,
                 0, 0);
         try {
-            mRadius = a.getDimensionPixelOffset(R.styleable.DotView_xls_radius, dp2px(20));
+            mRadius = a.getDimensionPixelOffset(R.styleable.DotView_xls_radius, dp2px(10));
             mCircleColor = a.getColor(R.styleable.DotView_xls_circle_color, Color.RED);
-            mLimitStretchLength = a.getDimensionPixelOffset(R.styleable.DotView_xls_max_stretch_length, dp2px(150));
+            mLimitStretchLength = a.getDimensionPixelOffset(R.styleable.DotView_xls_max_stretch_length, dp2px(100));
         } finally {
             a.recycle();
         }
@@ -102,10 +102,10 @@ public class DotView extends TextView {
         }
 
         //retrieve the draggable instance.
-        if (sDraggableLayout == null) {
-            sDraggableLayout = findDraggableLayout();
+        if (mDraggableLayout == null) {
+            mDraggableLayout = findDraggableLayout();
 
-            if (sDraggableLayout == null) {
+            if (mDraggableLayout == null) {
                 throw new IllegalArgumentException("the draggableLayout isn't be attached to view tree,you must invoke the attach method of DraggableLayout");
             }
         }
@@ -126,8 +126,8 @@ public class DotView extends TextView {
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN && isEnabled()) {
-            sDraggableLayout.preDrawDrag(this, ev);
-            sDraggableLayout.setCanIntercept(true);
+            mDraggableLayout.preDrawDrag(this, ev);
+            mDraggableLayout.setCanIntercept(true);
             return true;
         }
         return false;
@@ -137,13 +137,22 @@ public class DotView extends TextView {
         return mLimitStretchLength;
     }
 
+    public int getCircleColor() {
+        return mCircleColor;
+    }
 
     public onDotStateChangedListener getOnDotStateChangedListener() {
         return mOnDotStateChangedListener;
     }
 
     public void setOnDotStateChangedListener(onDotStateChangedListener onDotStateChangedListener) {
-        mOnDotStateChangedListener = onDotStateChangedListener;
+        if (onDotStateChangedListener == null) {
+            if (mOnDotStateChangedListener == null) {
+                mOnDotStateChangedListener = new SimpleDotStateChangedListener();
+            }
+        } else {
+            mOnDotStateChangedListener = onDotStateChangedListener;
+        }
     }
 
     /**

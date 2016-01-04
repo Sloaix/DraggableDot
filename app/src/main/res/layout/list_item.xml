@@ -21,6 +21,6 @@
         android:text="20"
         android:textColor="@android:color/white"
         android:textSize="12dp"
-        app:xls_circle_color="@android:color/black"
+        app:xls_circle_color="@color/colorAccent"
         app:xls_radius="10dp"/>
 </LinearLayout>

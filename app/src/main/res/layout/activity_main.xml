@@ -3,15 +3,30 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:gravity="center"
-              tools:context="com.lsxiao.draggablereddot.MainActivity">
+              android:orientation="vertical"
+              tools:context=".activity.MainActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <TextView
+        android:id="@+id/tv_tab_layout_1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/list_item">
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="TabLayout_1"
+        android:textSize="18sp"/>
 
-    </android.support.v7.widget.RecyclerView>
+    <TextView
+        android:id="@+id/tv_tab_layout_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="TabLayout_2"
+        android:textSize="18sp"/>
 
+    <TextView
+        android:id="@+id/tv_list_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="ListLayout"
+        android:textSize="18sp"/>
 </LinearLayout>
