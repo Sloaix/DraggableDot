@@ -68,8 +68,6 @@ public class DotView extends TextView {
         mPaint.setStyle(Paint.Style.FILL);
 
         mBgCircle = new Circle(mRadius, mRadius, mRadius);
-
-        mOnDotStateChangedListener = new SimpleDotStateChangedListener();
     }
 
     /**
@@ -104,9 +102,8 @@ public class DotView extends TextView {
         //retrieve the draggable instance.
         if (mDraggableLayout == null) {
             mDraggableLayout = findDraggableLayout();
-
             if (mDraggableLayout == null) {
-                throw new IllegalArgumentException("the draggableLayout isn't be attached to view tree,you must invoke the attach method of DraggableLayout");
+                throw new IllegalArgumentException("the draggableLayout isn't be attached to view tree,you must invoke the attachToActivity method of DraggableLayout");
             }
         }
     }
@@ -125,7 +122,7 @@ public class DotView extends TextView {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN && isEnabled()) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN && isEnabled() && mDraggableLayout != null) {
             mDraggableLayout.preDrawDrag(this, ev);
             mDraggableLayout.setCanIntercept(true);
             return true;
@@ -146,13 +143,7 @@ public class DotView extends TextView {
     }
 
     public void setOnDotStateChangedListener(onDotStateChangedListener onDotStateChangedListener) {
-        if (onDotStateChangedListener == null) {
-            if (mOnDotStateChangedListener == null) {
-                mOnDotStateChangedListener = new SimpleDotStateChangedListener();
-            }
-        } else {
-            mOnDotStateChangedListener = onDotStateChangedListener;
-        }
+        mOnDotStateChangedListener = onDotStateChangedListener;
     }
 
     /**
@@ -186,4 +177,10 @@ public class DotView extends TextView {
         }
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mDraggableLayout = null;
+        mOnDotStateChangedListener = null;
+    }
 }

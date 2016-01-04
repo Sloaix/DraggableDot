@@ -8,11 +8,6 @@ import android.graphics.PointF;
  * date 2015-12-26 16:49
  */
 public class PointFEvaluator implements TypeEvaluator<PointF> {
-
-    /**
-     * When null, a new PointF is returned on every evaluate call. When non-null,
-     * mPoint will be modified and returned on every evaluate.
-     */
     private PointF mPoint;
 
     /**
@@ -44,7 +39,7 @@ public class PointFEvaluator implements TypeEvaluator<PointF> {
      * between the start and end values. The calculation is a simple parametric
      * calculation on each of the separate components in the PointF objects
      * (x, y).
-     *
+     * <p/>
      * <p>If {@link #PointFEvaluator(android.graphics.PointF)} was used to construct
      * this PointFEvaluator, the object returned will be the <code>reuse</code>
      * passed into the constructor.</p>
@@ -53,7 +48,7 @@ public class PointFEvaluator implements TypeEvaluator<PointF> {
      * @param startValue The start PointF
      * @param endValue   The end PointF
      * @return A linear interpolation between the start and end values, given the
-     *         <code>fraction</code> parameter.
+     * <code>fraction</code> parameter.
      */
     @Override
     public PointF evaluate(float fraction, PointF startValue, PointF endValue) {
