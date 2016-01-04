@@ -6,7 +6,6 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
@@ -83,18 +82,16 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
         //the paint instance which used to draw bezierCurve
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
-        mPaint.setColor(Color.BLACK);
         mPaint.setStyle(Paint.Style.FILL);
 
         //the path instance which used to draw bezierCurve
         mPath = new Path();
     }
 
-
     /**
      * attach draggableLayout to view tree and make draggableLayout be a child of the decorView,
      * then let the content view become a child of the draggableLayout.
-     * <p>
+     * <p/>
      * Draggable dot and the animation will draw on draggable layer which will be drew above on it's children,
      * the DotView is just a placeHolder to listen the down event and notify DraggableLayout to handle the draggable events.
      * so,the DotView can be used in any layout,it's won't have any influence on your own layout.
@@ -128,13 +125,16 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-
         //after super.dispatchDraw(canvas) make sure draw drag effect above children view.
         if (mTouchedDotView == null) {
             return;
         }
+
         if (mFollowCircle == null || mTouchCircle == null) {
             initCircle();
+        }
+        if (mPaint.getColor() != mTouchedDotView.getCircleColor()) {
+            mPaint.setColor(mTouchedDotView.getCircleColor());
         }
 
         if (getState() == State.STRETCHING
@@ -179,7 +179,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
 
     /**
      * calculate 5 points that we used to draw Bezier curve.
-     * <p>
+     * <p/>
      * if the circle's property has changed,you need to recalculate the position of these points.
      */
     public void updatePoint() {
