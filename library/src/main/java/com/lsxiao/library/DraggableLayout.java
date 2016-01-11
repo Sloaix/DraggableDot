@@ -18,6 +18,10 @@ import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.FrameLayout;
 
 /**
+ * Responsible for intercepting and processing the move events,
+ * and draw draggable dot on the canvas of this layout.
+ * <p/>
+ * <p/>
  * author:lsxiao
  * date:2015/12/25 17:02
  */
@@ -447,7 +451,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
         }
 
         if (mPointFEvaluator == null) {
-            mPointFEvaluator = new PointFEvaluator();
+            mPointFEvaluator = new PointFEvaluator(new PointF(0, 0));
         }
 
         switch (state) {
@@ -569,7 +573,6 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
                 } else {
                     mAnimator.addListener(animatorListener);
                 }
-                //开始dismiss动画
                 break;
             }
         }

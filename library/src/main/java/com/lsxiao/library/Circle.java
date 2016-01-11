@@ -5,13 +5,12 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 
 /**
+ * Circle Shape
  * author:lsxiao
  * date:2015/12/25 19:04
  */
 public class Circle {
-    //圆心
     public PointF mCenter;
-    //半径
     public float mRadius;
 
     public Circle(PointF center, float radius) {
@@ -35,9 +34,6 @@ public class Circle {
      * @return return cut point, if the outPoint is inside,will return null.
      */
     public PointF getCutPoint(PointF outPoint, boolean first) {
-//        if (isInside(outPoint)) {
-//            return null;
-//        }
 
         final PointF cutPoint = new PointF(0, 0);
         final PointF temp;
