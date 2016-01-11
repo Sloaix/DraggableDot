@@ -41,11 +41,11 @@
                 android:layout_centerInParent="true"
                 android:layout_marginTop="-5dp"
                 android:layout_toRightOf="@id/tv_tab_2"
-                android:text="20"
                 android:textColor="@android:color/white"
-                android:textSize="10sp"
                 app:xls_circle_color="@color/colorAccent"
-                app:xls_radius="8dp"/>
+                app:xls_radius="8dp"
+                app:xls_text="20"
+                app:xls_text_size="10sp"/>
         </RelativeLayout>
 
         <TextView

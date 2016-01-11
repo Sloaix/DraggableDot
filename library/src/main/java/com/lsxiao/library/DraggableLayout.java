@@ -233,7 +233,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
      */
     private boolean isOverMaxDistance() {
         final float length = mOriginCircle.distanceToOtherCircle(mTouchCircle);
-        return length > mTouchedDotView.getLimitStretchLength() - 50;
+        return length > mTouchedDotView.getMaxStretchLength() - 50;
     }
 
     /**
@@ -616,8 +616,8 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
         if (mTouchedDotView == null) {
             return;
         }
-        final float deltaLength = Math.max(mTouchedDotView.getLimitStretchLength() - getLengthBetweenCenter(), 0);
-        final float fraction = deltaLength / mTouchedDotView.getLimitStretchLength();
+        final float deltaLength = Math.max(mTouchedDotView.getMaxStretchLength() - getLengthBetweenCenter(), 0);
+        final float fraction = deltaLength / mTouchedDotView.getMaxStretchLength();
         mFollowCircle.mRadius = fraction * mTouchCircle.mRadius;
     }
 }
