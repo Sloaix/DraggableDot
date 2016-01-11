@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -15,6 +16,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 /**
+ * Responsible for retrieve the first down motion event,
+ * and determine if notify DraggableLayout to intercept the motion event later.
+ * <p/>
+ * <p/>
  * author:lsxiao
  * date:2015/12/23 19:01
  */
@@ -22,10 +27,14 @@ public class DotView extends TextView {
     private DraggableLayout mDraggableLayout;
     private Circle mBgCircle;
     private Paint mPaint;
-    private float mLimitStretchLength;
+    private onDotStateChangedListener mOnDotStateChangedListener;
+
+    private float mMaxStretchLength;
     private int mRadius;
     private int mCircleColor;
-    private onDotStateChangedListener mOnDotStateChangedListener;
+    private String mText;
+    private float mTextSize;
+    private int mTextColor;
 
     public DotView(Context context) {
         this(context, null);
@@ -44,7 +53,10 @@ public class DotView extends TextView {
         try {
             mRadius = a.getDimensionPixelOffset(R.styleable.DotView_xls_radius, dp2px(10));
             mCircleColor = a.getColor(R.styleable.DotView_xls_circle_color, Color.RED);
-            mLimitStretchLength = a.getDimensionPixelOffset(R.styleable.DotView_xls_max_stretch_length, dp2px(100));
+            mMaxStretchLength = a.getDimensionPixelOffset(R.styleable.DotView_xls_max_stretch_length, dp2px(100));
+            mText = a.getString(R.styleable.DotView_xls_text);
+            mTextSize = a.getDimensionPixelOffset(R.styleable.DotView_xls_text_size, dp2px(16));
+            mTextColor = a.getColor(R.styleable.DotView_xls_text_color, Color.WHITE);
         } finally {
             a.recycle();
         }
@@ -66,6 +78,8 @@ public class DotView extends TextView {
         mPaint.setAntiAlias(true);
         mPaint.setColor(mCircleColor);
         mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setTextAlign(Paint.Align.CENTER);
+        mPaint.setTextSize(mTextSize);
 
         mBgCircle = new Circle(mRadius, mRadius, mRadius);
     }
@@ -117,7 +131,10 @@ public class DotView extends TextView {
     @Override
     protected void onDraw(Canvas canvas) {
         mBgCircle.draw(canvas, mPaint);
-        super.onDraw(canvas);
+        if (!TextUtils.isEmpty(mText)) {
+            mPaint.setColor(mTextColor);
+            canvas.drawText(mText, mBgCircle.mCenter.x, mBgCircle.mCenter.y, mPaint);
+        }
     }
 
     @Override
@@ -130,8 +147,8 @@ public class DotView extends TextView {
         return false;
     }
 
-    public float getLimitStretchLength() {
-        return mLimitStretchLength;
+    public float getMaxStretchLength() {
+        return mMaxStretchLength;
     }
 
     public int getCircleColor() {
