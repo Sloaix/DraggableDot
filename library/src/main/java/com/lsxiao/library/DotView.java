@@ -75,11 +75,12 @@ public class DotView extends TextView {
         setDrawingCacheEnabled(true);
 
         mPaint = new Paint();
+        //画笔无锯齿
         mPaint.setAntiAlias(true);
-        mPaint.setColor(mCircleColor);
-        mPaint.setStyle(Paint.Style.FILL);
+        //文字居中
         mPaint.setTextAlign(Paint.Align.CENTER);
         mPaint.setTextSize(mTextSize);
+        mPaint.setStyle(Paint.Style.FILL);
 
         mBgCircle = new Circle(mRadius, mRadius, mRadius);
     }
@@ -130,11 +131,29 @@ public class DotView extends TextView {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        drawCircle(canvas);
+        drawText(canvas);
+    }
+
+    private void drawCircle(Canvas canvas) {
+        mPaint.setColor(mCircleColor);
         mBgCircle.draw(canvas, mPaint);
-        if (!TextUtils.isEmpty(mText)) {
-            mPaint.setColor(mTextColor);
-            canvas.drawText(mText, mBgCircle.mCenter.x, mBgCircle.mCenter.y, mPaint);
+    }
+
+    private void drawText(Canvas canvas) {
+        if (TextUtils.isEmpty(mText)) {
+            return;
         }
+        mPaint.setColor(mTextColor);
+        int xPos = (canvas.getWidth() / 2);
+        int yPos = (int) ((canvas.getHeight() / 2) - ((mPaint.descent() + mPaint.ascent()) / 2));
+        //((textPaint.descent() + textPaint.ascent()) / 2) is the distance from the baseline to the center.
+        canvas.drawText(mText, xPos, yPos, mPaint);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
     }
 
     @Override

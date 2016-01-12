@@ -8,13 +8,8 @@ import android.graphics.PointF;
  * date 2015-12-26 16:49
  */
 public class PointFEvaluator implements TypeEvaluator<PointF> {
-    private PointF mPoint;
 
     public PointFEvaluator() {
-    }
-
-    public PointFEvaluator(PointF reuse) {
-        mPoint = reuse;
     }
 
     @Override
@@ -22,11 +17,6 @@ public class PointFEvaluator implements TypeEvaluator<PointF> {
         float x = startValue.x + (fraction * (endValue.x - startValue.x));
         float y = startValue.y + (fraction * (endValue.y - startValue.y));
 
-        if (mPoint != null) {
-            mPoint.set(x, y);
-            return mPoint;
-        } else {
-            return new PointF(x, y);
-        }
+        return new PointF(x, y);
     }
 }
