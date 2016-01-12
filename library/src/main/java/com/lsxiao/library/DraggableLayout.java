@@ -451,7 +451,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
         }
 
         if (mPointFEvaluator == null) {
-            mPointFEvaluator = new PointFEvaluator(new PointF(0, 0));
+            mPointFEvaluator = new PointFEvaluator();
         }
 
         switch (state) {
