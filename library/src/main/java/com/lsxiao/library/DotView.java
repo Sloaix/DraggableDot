@@ -32,7 +32,7 @@ public class DotView extends TextView {
     private float mMaxStretchLength;
     private int mRadius;
     private int mCircleColor;
-    private String mText;
+    private String mContent;
     private float mTextSize;
     private int mTextColor;
 
@@ -54,7 +54,7 @@ public class DotView extends TextView {
             mRadius = a.getDimensionPixelOffset(R.styleable.DotView_xls_radius, dp2px(10));
             mCircleColor = a.getColor(R.styleable.DotView_xls_circle_color, Color.RED);
             mMaxStretchLength = a.getDimensionPixelOffset(R.styleable.DotView_xls_max_stretch_length, dp2px(100));
-            mText = a.getString(R.styleable.DotView_xls_text);
+            mContent = a.getString(R.styleable.DotView_xls_content);
             mTextSize = a.getDimensionPixelOffset(R.styleable.DotView_xls_text_size, dp2px(16));
             mTextColor = a.getColor(R.styleable.DotView_xls_text_color, Color.WHITE);
         } finally {
@@ -141,14 +141,14 @@ public class DotView extends TextView {
     }
 
     private void drawText(Canvas canvas) {
-        if (TextUtils.isEmpty(mText)) {
+        if (TextUtils.isEmpty(mContent)) {
             return;
         }
         mPaint.setColor(mTextColor);
         int xPos = (canvas.getWidth() / 2);
         int yPos = (int) ((canvas.getHeight() / 2) - ((mPaint.descent() + mPaint.ascent()) / 2));
         //((textPaint.descent() + textPaint.ascent()) / 2) is the distance from the baseline to the center.
-        canvas.drawText(mText, xPos, yPos, mPaint);
+        canvas.drawText(mContent, xPos, yPos, mPaint);
     }
 
     @Override
@@ -196,7 +196,7 @@ public class DotView extends TextView {
     /**
      * the simple callback implement.
      */
-    public class SimpleDotStateChangedListener implements onDotStateChangedListener {
+    public static class SimpleDotStateChangedListener implements onDotStateChangedListener {
         @Override
         public void onStretch(DotView dotView) {
             //do nothing.
@@ -218,5 +218,30 @@ public class DotView extends TextView {
         super.onDetachedFromWindow();
         mDraggableLayout = null;
         mOnDotStateChangedListener = null;
+    }
+
+    public void setBgCircle(Circle bgCircle) {
+        mBgCircle = bgCircle;
+        postInvalidate();
+    }
+
+    public void setMaxStretchLength(float maxStretchLength) {
+        mMaxStretchLength = maxStretchLength;
+        postInvalidate();
+    }
+
+    public void setRadius(int radius) {
+        mRadius = radius;
+        postInvalidate();
+    }
+
+    public void setCircleColor(int circleColor) {
+        mCircleColor = circleColor;
+        postInvalidate();
+    }
+
+    public void setContent(String s) {
+        mContent = s;
+        postInvalidate();
     }
 }
