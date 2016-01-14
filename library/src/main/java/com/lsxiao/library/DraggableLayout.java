@@ -153,7 +153,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
             if (getState() == STATE_DISMISSING) {
                 mTouchCircle.draw(canvas, mPaint);
             } else {
-                canvas.drawBitmap(mTouchedDotView.getDrawingCache(), mTouchCircle.mCenter.x - mTouchCircle.mRadius, mTouchCircle.mCenter.y - mTouchCircle.mRadius, mPaint);
+                canvas.drawBitmap(mTouchedDotView.getDrawingCache(), mTouchCircle.center.x - mTouchCircle.radius, mTouchCircle.center.y - mTouchCircle.radius, mPaint);
             }
         }
     }
@@ -181,14 +181,14 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
      * if the circle's property has changed,you need to recalculate the position of these points.
      */
     public void updatePoint() {
-        mPointA = mFollowCircle.getCutPoint(mTouchCircle.mCenter, true);
-        mPointC = mTouchCircle.getCutPoint(mFollowCircle.mCenter, false);
+        mPointA = mFollowCircle.getCutPoint(mTouchCircle.center, true);
+        mPointC = mTouchCircle.getCutPoint(mFollowCircle.center, false);
 
-        mPointB = mFollowCircle.getCutPoint(mTouchCircle.mCenter, false);
-        mPointD = mTouchCircle.getCutPoint(mFollowCircle.mCenter, true);
+        mPointB = mFollowCircle.getCutPoint(mTouchCircle.center, false);
+        mPointD = mTouchCircle.getCutPoint(mFollowCircle.center, true);
 
-        float midX = (mFollowCircle.mCenter.x + mTouchCircle.mCenter.x) / 2;
-        float midY = (mFollowCircle.mCenter.y + mTouchCircle.mCenter.y) / 2;
+        float midX = (mFollowCircle.center.x + mTouchCircle.center.x) / 2;
+        float midY = (mFollowCircle.center.y + mTouchCircle.center.y) / 2;
         mPointMid = new PointF(midX, midY);
     }
 
@@ -342,8 +342,8 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
         final float y = ev.getY();
         final float dx = (x - mLastPosX);
         final float dy = (y - mLastPosY);
-        mTouchCircle.mCenter.x += dx;
-        mTouchCircle.mCenter.y += dy;
+        mTouchCircle.center.x += dx;
+        mTouchCircle.center.y += dy;
         updateFixedCircleRadius();
         switch (mState) {
             case STATE_IDLE: {
@@ -457,7 +457,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
         switch (state) {
             case STATE_FOLLOW_MOVING_TO_TOUCH: {
                 //fixed move to drag
-                mAnimator = ValueAnimator.ofObject(mPointFEvaluator, mFollowCircle.mCenter, mTouchCircle.mCenter);
+                mAnimator = ValueAnimator.ofObject(mPointFEvaluator, mFollowCircle.center, mTouchCircle.center);
                 mAnimator.setEvaluator(mPointFEvaluator);
                 mAnimator.setDuration(200);
                 mAnimator.setInterpolator(new FastOutSlowInInterpolator());
@@ -492,7 +492,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
             }
             case STATE_FOLLOW_MOVING_TO_ORIGIN: {
                 mFollowCircle = Circle.copy(mTouchCircle);
-                mAnimator = ValueAnimator.ofObject(mPointFEvaluator, mFollowCircle.mCenter, mOriginCircle.mCenter);
+                mAnimator = ValueAnimator.ofObject(mPointFEvaluator, mFollowCircle.center, mOriginCircle.center);
                 mAnimator.setEvaluator(mPointFEvaluator);
                 mAnimator.setDuration(300);
                 mAnimator.setInterpolator(new FastOutSlowInInterpolator());
@@ -525,7 +525,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
                 break;
             }
             case STATE_TOUCH_MOVING_TO_ORIGIN: {
-                mAnimator = ValueAnimator.ofObject(mPointFEvaluator, mTouchCircle.mCenter, mOriginCircle.mCenter);
+                mAnimator = ValueAnimator.ofObject(mPointFEvaluator, mTouchCircle.center, mOriginCircle.center);
                 mAnimator.setEvaluator(mPointFEvaluator);
                 mAnimator.setDuration(300);
                 mAnimator.setInterpolator(new FastOutSlowInInterpolator());
@@ -550,7 +550,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
                 break;
             }
             case STATE_DISMISSING: {
-                mAnimator = ValueAnimator.ofFloat(mTouchCircle.mRadius, 0);
+                mAnimator = ValueAnimator.ofFloat(mTouchCircle.radius, 0);
                 mAnimator.setDuration(300);
                 mAnimator.setInterpolator(new AnticipateOvershootInterpolator());
                 mAnimator.addUpdateListener(this);
@@ -586,22 +586,22 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
     public void onAnimationUpdate(ValueAnimator valueAnimator) {
         switch (mState) {
             case STATE_FOLLOW_MOVING_TO_TOUCH: {
-                mFollowCircle.mCenter = (PointF) valueAnimator.getAnimatedValue();
+                mFollowCircle.center = (PointF) valueAnimator.getAnimatedValue();
                 updateFixedCircleRadius();
                 break;
             }
             case STATE_FOLLOW_MOVING_TO_ORIGIN: {
-                mFollowCircle.mCenter = (PointF) valueAnimator.getAnimatedValue();
+                mFollowCircle.center = (PointF) valueAnimator.getAnimatedValue();
                 updateFixedCircleRadius();
                 break;
             }
             case STATE_TOUCH_MOVING_TO_ORIGIN: {
-                mTouchCircle.mCenter = (PointF) valueAnimator.getAnimatedValue();
+                mTouchCircle.center = (PointF) valueAnimator.getAnimatedValue();
                 updateFixedCircleRadius();
                 break;
             }
             case STATE_DISMISSING: {
-                mTouchCircle.mRadius = (float) valueAnimator.getAnimatedValue();
+                mTouchCircle.radius = (float) valueAnimator.getAnimatedValue();
                 break;
             }
         }
@@ -618,6 +618,6 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
         }
         final float deltaLength = Math.max(mTouchedDotView.getMaxStretchLength() - getLengthBetweenCenter(), 0);
         final float fraction = deltaLength / mTouchedDotView.getMaxStretchLength();
-        mFollowCircle.mRadius = fraction * mTouchCircle.mRadius;
+        mFollowCircle.radius = fraction * mTouchCircle.radius;
     }
 }

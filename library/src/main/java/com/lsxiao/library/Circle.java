@@ -10,12 +10,12 @@ import android.graphics.PointF;
  * date:2015/12/25 19:04
  */
 public class Circle {
-    public PointF mCenter;
-    public float mRadius;
+    public PointF center;
+    public float radius;
 
     public Circle(PointF center, float radius) {
-        mCenter = center;
-        mRadius = radius;
+        this.center = center;
+        this.radius = radius;
     }
 
     public Circle(float cx, float cy, float radius) {
@@ -23,7 +23,7 @@ public class Circle {
     }
 
     public void draw(Canvas canvas, Paint paint) {
-        canvas.drawCircle(mCenter.x, mCenter.y, mRadius, paint);
+        canvas.drawCircle(center.x, center.y, radius, paint);
     }
 
     /**
@@ -38,18 +38,18 @@ public class Circle {
         final PointF cutPoint = new PointF(0, 0);
         final PointF temp;
 
-        cutPoint.x = outPoint.x - mCenter.x;
-        cutPoint.y = outPoint.y - mCenter.y;
+        cutPoint.x = outPoint.x - center.x;
+        cutPoint.y = outPoint.y - center.y;
 
-        float ratio = mRadius / (float) Math.sqrt(cutPoint.x * cutPoint.x + cutPoint.y * cutPoint.y);
+        float ratio = radius / (float) Math.sqrt(cutPoint.x * cutPoint.x + cutPoint.y * cutPoint.y);
         cutPoint.x *= ratio;
         cutPoint.y *= ratio;
 
         temp = new PointF(cutPoint.x, cutPoint.y);
         float radians = first ? (float) Math.acos(ratio) : (float) -Math.acos(ratio);
 
-        cutPoint.x = temp.x * (float) Math.cos(radians) - temp.y * (float) Math.sin(radians) + mCenter.x;
-        cutPoint.y = temp.x * (float) Math.sin(radians) + temp.y * (float) Math.cos(radians) + mCenter.y;
+        cutPoint.x = temp.x * (float) Math.cos(radians) - temp.y * (float) Math.sin(radians) + center.x;
+        cutPoint.y = temp.x * (float) Math.sin(radians) + temp.y * (float) Math.cos(radians) + center.y;
 
         return cutPoint;
     }
@@ -63,10 +63,29 @@ public class Circle {
         if (p == null) {
             throw new IllegalArgumentException("point can't be null");
         }
-        return mRadius < Math.abs(Math.sqrt(Math.pow(p.x - mCenter.x, 2) + Math.pow(p.y - mCenter.y, 2)));
+        System.out.println(center);
+//        System.out.println(p.x+" "+p.y);
+//        System.out.println(distanceOfPoints(p, center));
+        return radius < distanceOfPoints(p, center);
     }
 
-    public boolean isInside(PointF p) {
+
+    public static double distanceOfPoints(PointF a, PointF b) {
+        return distanceOfPoints(a.x, a.y, b.x, b.y);
+    }
+
+    public static double distanceOfPoints(double x1, double y1, double x2, double y2) {
+        double d = (x2 - x1) * (x2 - x1) - (y2 - y1) * (y2 - y1);
+        return Math.sqrt(d);
+    }
+
+    /**
+     * check the point if in circle.
+     *
+     * @param p PointF
+     * @return true, if is inside.
+     */
+    public boolean isContainPoint(PointF p) {
         return !isOutside(p);
     }
 
@@ -77,18 +96,18 @@ public class Circle {
      * @return float
      */
     public float distanceToOtherCircle(Circle circle) {
-        return (float) Math.abs(Math.sqrt(Math.pow(circle.mCenter.x - mCenter.x, 2) + Math.pow(circle.mCenter.y - mCenter.y, 2)));
+        return (float) Math.abs(Math.sqrt(Math.pow(circle.center.x - center.x, 2) + Math.pow(circle.center.y - center.y, 2)));
     }
 
     @Override
     public String toString() {
         return "Circle{" +
-                "mCenter= [" + mCenter.x + "," + mCenter.y + "]" +
-                ", mRadius=" + mRadius +
+                "center= [" + center.x + "," + center.y + "]" +
+                ", radius=" + radius +
                 '}';
     }
 
     public static Circle copy(Circle circle) {
-        return new Circle(circle.mCenter.x, circle.mCenter.y, circle.mRadius);
+        return new Circle(circle.center.x, circle.center.y, circle.radius);
     }
 }
