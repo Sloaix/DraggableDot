@@ -18,9 +18,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:text="20"
         android:textColor="@android:color/white"
-        android:textSize="12dp"
-        app:circle_color="@android:color/black"
-        app:radius="10dp"/>
+        app:xls_circle_color="@color/colorAccent"
+        app:xls_content="20"
+        app:xls_radius="10dp"
+        app:xls_text_color="@android:color/white"
+        app:xls_text_size="12dp"/>
 </LinearLayout>

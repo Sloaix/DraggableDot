@@ -33,3 +33,4 @@ proguard/
 .DS_Store
 /build
 /captures
+.idea
