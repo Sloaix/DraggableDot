@@ -1,4 +1,5 @@
-#DraggableDot
+#DraggableDot 
+[![](https://jitpack.io/v/lsxiao/DraggableDot.svg)](https://jitpack.io/#lsxiao/DraggableDot)
 
 A little dot that can be dragged with animation in full screen. 
 
