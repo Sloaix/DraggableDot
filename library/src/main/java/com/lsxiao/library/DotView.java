@@ -53,7 +53,7 @@ public class DotView extends TextView {
         try {
             mRadius = a.getDimensionPixelOffset(R.styleable.DotView_xls_radius, dp2px(10));
             mCircleColor = a.getColor(R.styleable.DotView_xls_circle_color, Color.RED);
-            mMaxStretchLength = a.getDimensionPixelOffset(R.styleable.DotView_xls_max_stretch_length, dp2px(100));
+            mMaxStretchLength = a.getDimensionPixelOffset(R.styleable.DotView_xls_max_stretch_length, dp2px(130));
             mContent = a.getString(R.styleable.DotView_xls_content);
             mTextSize = a.getDimensionPixelOffset(R.styleable.DotView_xls_text_size, dp2px(16));
             mTextColor = a.getColor(R.styleable.DotView_xls_text_color, Color.WHITE);
