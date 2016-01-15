@@ -58,21 +58,6 @@ then layout in xml.
 you can listen the state change by implement this listener.
 
 ```java
-/**
- * the callback interface.
- */
-public interface onDotStateChangedListener {
-    void onStretch(DotView dotView);
-
-    void onDrag(DotView dotView);
-
-    //the dotView will be invisible.
-    void onDismissed(DotView dotView);
-}
-
-```
-
-```java
 DotView dotView = (DotView) findViewById(R.id.dot);
 dotView.setOnDotStateChangedListener(new DotView.onDotStateChangedListener() {
     @Override
