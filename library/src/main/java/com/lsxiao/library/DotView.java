@@ -72,8 +72,6 @@ public class DotView extends TextView {
      */
     private void init() {
         setGravity(Gravity.CENTER);
-        setDrawingCacheEnabled(true);
-
         mPaint = new Paint();
         //画笔无锯齿
         mPaint.setAntiAlias(true);
