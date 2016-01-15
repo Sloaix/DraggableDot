@@ -13,9 +13,9 @@ A little dot that can be dragged with animation in full screen.
 
 
 ##Dependence 
-###gradle
-####step-1
+###step-1
 
+###gradle 
 ```groovy
 allprojects {
 	repositories {
@@ -24,25 +24,45 @@ allprojects {
 	}
 }
 ```
-####step-2
 
+###maven
+```
+<repositories>
+	<repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+</repositories>
+```
+
+
+###step-2
+
+###gradle 
 ```groovy
 dependencies {
         compile 'com.github.lsxiao:DraggableDot:-SNAPSHOT'
 }
 ```
 
-
+###maven
+```
+<dependency>
+    <groupId>com.github.lsxiao</groupId>
+    <artifactId>DraggableDot</artifactId>
+    <version>-SNAPSHOT</version>
+</dependency>
+```
 ##How to use it
 
-####step-1
+###step-1
 first you must attach draggableLayout to your activity.
 
 ```java
 DraggableLayout.attachToActivity(yourActivity);
 ```
 
-####step-2
+###step-2
 then layout in xml.
 
 ```xml
@@ -56,7 +76,7 @@ then layout in xml.
     app:xls_text_size="10sp"/>
 ```
 
-####step-3
+###step-3
 you can listen the state change by implement this listener.
 
 ```java
