@@ -2,6 +2,8 @@
 
 A little dot that can be dragged with animation in full screen. 
 
+**the DotView will be draw above your content view of your activity.**
+
 ------
 
 ## Demo
