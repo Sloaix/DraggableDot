@@ -6,6 +6,6 @@
         <attr name="xls_max_stretch_length" format="dimension"/>
         <attr name="xls_content" format="string"/>
         <attr name="xls_text_size" format="dimension"/>.
-        <attr name="xls_text_color" format="color"/>.
+        <attr name="xls_content_color" format="color"/>.
     </declare-styleable>
 </resources>
