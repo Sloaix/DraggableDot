@@ -147,7 +147,7 @@ public class DotView extends TextView {
         mPaint.setColor(mTextColor);
         int xPos = (canvas.getWidth() / 2);
         int yPos = (int) ((canvas.getHeight() / 2) - ((mPaint.descent() + mPaint.ascent()) / 2));
-        //((textPaint.descent() + textPaint.ascent()) / 2) is the distance from the baseline to the center.
+        //((Paint.descent() + Paint.ascent()) / 2) is the distance from the baseline to the center.
         canvas.drawText(mContent, xPos, yPos, mPaint);
     }
 
