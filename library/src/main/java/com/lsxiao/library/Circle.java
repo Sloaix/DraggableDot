@@ -27,45 +27,38 @@ public class Circle {
     }
 
     /**
-     * 获取圆上切点
+     * intersection
      *
-     * @param outPoint 圆外的点
-     * @param first    第一个点
-     * @return return cut point, if the outPoint is inside,will return null.
+     * @param outPoint a point out of circle
+     * @param first    the first intersection
+     * @return return intersection, if the outPoint is inside,will return null.
      */
-    public PointF getCutPoint(PointF outPoint, boolean first) {
+    public PointF getIntersection(PointF outPoint, boolean first) {
 
-        final PointF cutPoint = new PointF(0, 0);
+        final PointF intersection = new PointF(0, 0);
         final PointF temp;
 
-        cutPoint.x = outPoint.x - center.x;
-        cutPoint.y = outPoint.y - center.y;
+        intersection.x = outPoint.x - center.x;
+        intersection.y = outPoint.y - center.y;
 
-        float ratio = radius / (float) Math.sqrt(cutPoint.x * cutPoint.x + cutPoint.y * cutPoint.y);
-        cutPoint.x *= ratio;
-        cutPoint.y *= ratio;
+        float ratio = radius / (float) Math.sqrt(intersection.x * intersection.x + intersection.y * intersection.y);
+        intersection.x *= ratio;
+        intersection.y *= ratio;
 
-        temp = new PointF(cutPoint.x, cutPoint.y);
+        temp = new PointF(intersection.x, intersection.y);
         float radians = first ? (float) Math.acos(ratio) : (float) -Math.acos(ratio);
 
-        cutPoint.x = temp.x * (float) Math.cos(radians) - temp.y * (float) Math.sin(radians) + center.x;
-        cutPoint.y = temp.x * (float) Math.sin(radians) + temp.y * (float) Math.cos(radians) + center.y;
+        intersection.x = temp.x * (float) Math.cos(radians) - temp.y * (float) Math.sin(radians) + center.x;
+        intersection.y = temp.x * (float) Math.sin(radians) + temp.y * (float) Math.cos(radians) + center.y;
 
-        return cutPoint;
+        return intersection;
     }
 
-    /**
-     * 点是否在圆外
-     *
-     * @return boolean
-     */
     public boolean isOutside(PointF p) {
         if (p == null) {
             throw new IllegalArgumentException("point can't be null");
         }
         System.out.println(center);
-//        System.out.println(p.x+" "+p.y);
-//        System.out.println(distanceOfPoints(p, center));
         return radius < distanceOfPoints(p, center);
     }
 
@@ -90,7 +83,7 @@ public class Circle {
     }
 
     /**
-     * 计算两圆之间圆心距离
+     * distance between circle center
      *
      * @param circle Circle
      * @return float
@@ -107,7 +100,7 @@ public class Circle {
                 '}';
     }
 
-    public static Circle copy(Circle circle) {
+    public static Circle clone(Circle circle) {
         return new Circle(circle.center.x, circle.center.y, circle.radius);
     }
 }

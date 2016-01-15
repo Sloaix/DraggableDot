@@ -181,11 +181,11 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
      * if the circle's property has changed,you need to recalculate the position of these points.
      */
     public void updatePoint() {
-        mPointA = mFollowCircle.getCutPoint(mTouchCircle.center, true);
-        mPointC = mTouchCircle.getCutPoint(mFollowCircle.center, false);
+        mPointA = mFollowCircle.getIntersection(mTouchCircle.center, true);
+        mPointC = mTouchCircle.getIntersection(mFollowCircle.center, false);
 
-        mPointB = mFollowCircle.getCutPoint(mTouchCircle.center, false);
-        mPointD = mTouchCircle.getCutPoint(mFollowCircle.center, true);
+        mPointB = mFollowCircle.getIntersection(mTouchCircle.center, false);
+        mPointD = mTouchCircle.getIntersection(mFollowCircle.center, true);
 
         float midX = (mFollowCircle.center.x + mTouchCircle.center.x) / 2;
         float midY = (mFollowCircle.center.y + mTouchCircle.center.y) / 2;
@@ -434,8 +434,8 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
         int dy = -layoutLocation[1] + dotLocation[1];
 
         mFollowCircle = new Circle(dx - getLeft() + mTouchedDotView.getWidth() / 2, dy - getTop() + mTouchedDotView.getWidth() / 2, mTouchedDotView.getWidth() / 2);
-        mTouchCircle = Circle.copy(mFollowCircle);
-        mOriginCircle = Circle.copy(mFollowCircle);
+        mTouchCircle = Circle.clone(mFollowCircle);
+        mOriginCircle = Circle.clone(mFollowCircle);
     }
 
     private void animate(int state) {
@@ -491,7 +491,7 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
                 break;
             }
             case STATE_FOLLOW_MOVING_TO_ORIGIN: {
-                mFollowCircle = Circle.copy(mTouchCircle);
+                mFollowCircle = Circle.clone(mTouchCircle);
                 mAnimator = ValueAnimator.ofObject(mPointFEvaluator, mFollowCircle.center, mOriginCircle.center);
                 mAnimator.setEvaluator(mPointFEvaluator);
                 mAnimator.setDuration(300);
