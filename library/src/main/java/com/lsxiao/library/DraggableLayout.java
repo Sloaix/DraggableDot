@@ -153,7 +153,9 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
             if (getState() == STATE_DISMISSING) {
                 mTouchCircle.draw(canvas, mPaint);
             } else {
+                mTouchedDotView.setDrawingCacheEnabled(true);
                 canvas.drawBitmap(mTouchedDotView.getDrawingCache(), mTouchCircle.center.x - mTouchCircle.radius, mTouchCircle.center.y - mTouchCircle.radius, mPaint);
+                mTouchedDotView.setDrawingCacheEnabled(false);
             }
         }
     }
