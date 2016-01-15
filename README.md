@@ -12,7 +12,7 @@ A little dot that can be dragged with animation in full screen.
 
 
 
-##Start 
+##Dependence 
 ###gradle
 ####step-1
 
@@ -33,7 +33,7 @@ dependencies {
 ```
 
 
-##How to use
+##How to use it
 
 ####step-1
 first you must attach draggableLayout to your activity.
