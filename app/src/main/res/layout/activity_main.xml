@@ -7,19 +7,11 @@
               tools:context=".activity.MainActivity">
 
     <TextView
-        android:id="@+id/tv_tab_layout_1"
+        android:id="@+id/tv_tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="TabLayout_1"
-        android:textSize="18sp"/>
-
-    <TextView
-        android:id="@+id/tv_tab_layout_2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="TabLayout_2"
+        android:text="TabLayout"
         android:textSize="18sp"/>
 
     <TextView
