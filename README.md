@@ -41,7 +41,7 @@ allprojects {
 ###gradle 
 ```groovy
 dependencies {
-        compile 'com.github.lsxiao:DraggableDot:-SNAPSHOT'
+        compile 'com.github.lsxiao:DraggableDot:0.1'
 }
 ```
 
@@ -50,7 +50,7 @@ dependencies {
 <dependency>
     <groupId>com.github.lsxiao</groupId>
     <artifactId>DraggableDot</artifactId>
-    <version>-SNAPSHOT</version>
+    <version>0.1</version>
 </dependency>
 ```
 ##How to use it
