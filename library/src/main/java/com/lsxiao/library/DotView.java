@@ -116,9 +116,11 @@ public class DotView extends TextView {
         if (mDraggableLayout == null) {
             mDraggableLayout = findDraggableLayout();
             if (mDraggableLayout == null) {
-                throw new IllegalArgumentException("the draggableLayout isn't be attached to view tree,you must invoke the attachToActivity method of DraggableLayout");
+                setEnabled(false);
+//                throw new IllegalArgumentException("the draggableLayout isn't be attached to view tree,you must invoke the attachToActivity method of DraggableLayout");
             }
         }
+        setEnabled(true);
     }
 
     @Override
