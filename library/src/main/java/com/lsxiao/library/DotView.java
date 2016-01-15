@@ -112,7 +112,7 @@ public class DotView extends TextView {
             return;
         }
 
-        //retrieve the draggable instance.
+        //find the draggable instance.
         if (mDraggableLayout == null) {
             mDraggableLayout = findDraggableLayout();
             if (mDraggableLayout == null) {
