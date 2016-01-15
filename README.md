@@ -3,6 +3,13 @@
 A little dot that can be dragged with animation in full screen. 
 
 ------
+
+## Demo
+
+![](https://github.com/lsxiao/DraggableDot/blob/master/demo.gif?raw=true)
+
+
+
 ##Start 
 ###gradle
 ####step-1
@@ -64,12 +71,6 @@ public interface onDotStateChangedListener {
 }
 
 ```
-
-## Demo
-
-![](https://github.com/lsxiao/DraggableDot/blob/master/demo.gif?raw=true)
-
-
 
 ## License
 
