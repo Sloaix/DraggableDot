@@ -72,6 +72,26 @@ public interface onDotStateChangedListener {
 
 ```
 
+```java
+DotView dotView = (DotView) findViewById(R.id.dot);
+dotView.setOnDotStateChangedListener(new DotView.onDotStateChangedListener() {
+    @Override
+    public void onStretch(DotView dotView) {
+        Log.d("xls", "onStretch");
+    }
+
+    @Override
+    public void onDrag(DotView dotView) {
+        Log.d("xls", "onDrag");
+    }
+
+    @Override
+    public void onDismissed(DotView dotView) {
+        Log.d("xls", "onDismissed");
+    }
+});
+```
+
 ## License
 
 MIT
