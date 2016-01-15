@@ -44,7 +44,7 @@
                 android:layout_toRightOf="@id/tv_tab_2"
                 app:xls_circle_color="@color/colorAccent"
                 app:xls_radius="8dp"
-                app:xls_text_color="@android:color/white"
+                app:xls_content_color="@android:color/white"
                 app:xls_content="20"
                 app:xls_text_size="10sp"/>
         </RelativeLayout>
