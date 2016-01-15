@@ -4,15 +4,33 @@ A little dot that can be dragged with animation in full screen.
 
 ------
 ##Start 
+###gradle
+####step-1
+```
+allprojects {
+	repositories {
+		...
+		maven { url "https://jitpack.io" }
+	}
+}
+```
+####step-2
+```
+dependencies {
+        compile 'undefined:undefined:undefined'
+}
+```
 
 
 ##How to use
 
+####step-1
 first you must attach draggableLayout to your activity.
 ```java
 DraggableLayout.attachToActivity(yourActivity);
 ```
 
+####step-2
 then layout in xml.
 ```xml
 <com.lsxiao.library.DotView
@@ -25,6 +43,7 @@ then layout in xml.
     app:xls_text_size="10sp"/>
 ```
 
+####step-3
 you can listen the state change by implement this listener.
 
 ```java
