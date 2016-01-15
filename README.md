@@ -41,7 +41,7 @@ then layout in xml.
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     app:xls_circle_color="@color/colorAccent"
-    app:xls_text_color="@android:color/white"
+    app:xls_content_color="@android:color/white"
     app:xls_radius="8dp"
     app:xls_content="20"
     app:xls_text_size="10sp"/>
