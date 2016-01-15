@@ -6,7 +6,8 @@ A little dot that can be dragged with animation in full screen.
 ##Start 
 ###gradle
 ####step-1
-```
+
+```groovy
 allprojects {
 	repositories {
 		...
@@ -15,9 +16,10 @@ allprojects {
 }
 ```
 ####step-2
-```
+
+```groovy
 dependencies {
-        compile 'undefined:undefined:undefined'
+        compile 'com.github.lsxiao:DraggableDot:-SNAPSHOT'
 }
 ```
 
@@ -26,12 +28,14 @@ dependencies {
 
 ####step-1
 first you must attach draggableLayout to your activity.
+
 ```java
 DraggableLayout.attachToActivity(yourActivity);
 ```
 
 ####step-2
 then layout in xml.
+
 ```xml
 <com.lsxiao.library.DotView
     android:layout_width="wrap_content"
