@@ -34,7 +34,7 @@ public class DotView extends TextView {
     private int mCircleColor;
     private String mContent;
     private float mTextSize;
-    private int mTextColor;
+    private int mContentColor;
 
     public DotView(Context context) {
         this(context, null);
@@ -56,7 +56,7 @@ public class DotView extends TextView {
             mMaxStretchLength = a.getDimensionPixelOffset(R.styleable.DotView_xls_max_stretch_length, dp2px(130));
             mContent = a.getString(R.styleable.DotView_xls_content);
             mTextSize = a.getDimensionPixelOffset(R.styleable.DotView_xls_text_size, dp2px(16));
-            mTextColor = a.getColor(R.styleable.DotView_xls_text_color, Color.WHITE);
+            mContentColor = a.getColor(R.styleable.DotView_xls_content_color, Color.WHITE);
         } finally {
             a.recycle();
         }
@@ -144,7 +144,7 @@ public class DotView extends TextView {
         if (TextUtils.isEmpty(mContent)) {
             return;
         }
-        mPaint.setColor(mTextColor);
+        mPaint.setColor(mContentColor);
         int xPos = (canvas.getWidth() / 2);
         int yPos = (int) ((canvas.getHeight() / 2) - ((mPaint.descent() + mPaint.ascent()) / 2));
         //((Paint.descent() + Paint.ascent()) / 2) is the distance from the baseline to the center.
@@ -220,8 +220,8 @@ public class DotView extends TextView {
         mOnDotStateChangedListener = null;
     }
 
-    public void setBgCircle(Circle bgCircle) {
-        mBgCircle = bgCircle;
+    public void setContentColor(int contentColor) {
+        mContentColor = contentColor;
         postInvalidate();
     }
 
