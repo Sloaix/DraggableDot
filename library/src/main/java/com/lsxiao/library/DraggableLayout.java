@@ -30,15 +30,16 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
     private Circle mTouchCircle;
     private Circle mFollowCircle;
     private Circle mOriginCircle;
-    private PointF mPointA;
+    private PointF mP1;
     //intersection on Follow Circle
-    private PointF mPointB;
+    private PointF mP3;
     //intersection on Touch Circle
-    private PointF mPointC;
+    private PointF mP2;
     //intersection on Touch Circle
-    private PointF mPointD;
+    private PointF mP4;
     //mid point
-    private PointF mPointMid;
+    private PointF mCP1;
+    private PointF mCP2;
     private Paint mPaint;
     private Path mPath;
 
@@ -168,11 +169,11 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
      */
     public void drawBezierCurve(Canvas canvas, Paint paint) {
         mPath.reset();
-        mPath.moveTo(mPointA.x, mPointA.y);
-        mPath.quadTo(mPointMid.x, mPointMid.y, mPointC.x, mPointC.y);
-        mPath.lineTo(mPointD.x, mPointD.y);
-        mPath.quadTo(mPointMid.x, mPointMid.y, mPointB.x, mPointB.y);
-        mPath.lineTo(mPointA.x, mPointA.y);
+        mPath.moveTo(mP1.x, mP1.y);
+        mPath.quadTo(mCP1.x, mCP1.y, mP2.x, mP2.y);
+        mPath.lineTo(mP4.x, mP4.y);
+        mPath.quadTo(mCP2.x, mCP2.y, mP3.x, mP3.y);
+        mPath.lineTo(mP1.x, mP1.y);
         mPath.close();
         canvas.drawPath(mPath, paint);
     }
@@ -183,15 +184,15 @@ public class DraggableLayout extends FrameLayout implements ValueAnimator.Animat
      * if the circle's property has changed,you need to recalculate the position of these points.
      */
     public void updatePoint() {
-        mPointA = mFollowCircle.getIntersection(mTouchCircle.center, true);
-        mPointC = mTouchCircle.getIntersection(mFollowCircle.center, false);
 
-        mPointB = mFollowCircle.getIntersection(mTouchCircle.center, false);
-        mPointD = mTouchCircle.getIntersection(mFollowCircle.center, true);
+        mP1 = mFollowCircle.commonTangentIntersections(mTouchCircle)[0];
+        mP2 = mFollowCircle.commonTangentIntersections(mTouchCircle)[1];
+        mP3 = mFollowCircle.commonTangentIntersections(mTouchCircle)[2];
+        mP4 = mFollowCircle.commonTangentIntersections(mTouchCircle)[3];
 
-        float midX = (mFollowCircle.center.x + mTouchCircle.center.x) / 2;
-        float midY = (mFollowCircle.center.y + mTouchCircle.center.y) / 2;
-        mPointMid = new PointF(midX, midY);
+        mCP1 = new PointF((mP1.x + mP4.x) / 2, (mP1.y + mP4.y) / 2);
+
+        mCP2 = new PointF((mP2.x + mP3.x) / 2, (mP2.y + mP3.y) / 2);
     }
 
     @Override

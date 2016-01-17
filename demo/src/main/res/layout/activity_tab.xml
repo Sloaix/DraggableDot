@@ -37,6 +37,7 @@
                 android:textColor="@android:color/white"/>
 
             <com.lsxiao.library.DotView
+                android:id="@+id/dot"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_above="@id/tv_tab_2"

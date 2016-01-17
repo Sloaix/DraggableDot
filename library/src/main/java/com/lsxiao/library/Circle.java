@@ -54,6 +54,51 @@ public class Circle {
         return intersection;
     }
 
+    public PointF[] commonTangentIntersections(Circle ci) {
+        float x1 = center.x;
+        float y1 = center.y;
+        float x2 = ci.center.x;
+        float y2 = ci.center.y;
+        float r1 = radius;
+        float r2 = ci.radius;
+
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        float d = (float) Math.sqrt(dx * dx + dy * dy);
+
+        float a1 = (float) Math.atan((y2 - y1) / (x1 - x2));
+        float a2 = (float) Math.asin((r1 - r2) / d);
+        float a3 = (float) Math.PI / 2 - a1 - a2;
+        float a4 = (float) Math.PI / 2 - a1 + a2;
+
+
+        float offX1 = (float) Math.cos(a3) * r1;
+        float offY1 = (float) Math.sin(a3) * r1;
+        float offX2 = (float) Math.cos(a3) * r2;
+        float offY2 = (float) Math.sin(a3) * r2;
+        float offX3 = (float) Math.cos(a4) * r1;
+        float offY3 = (float) Math.sin(a4) * r1;
+        float offX4 = (float) Math.cos(a4) * r2;
+        float offY4 = (float) Math.sin(a4) * r2;
+
+        float p1x = x1 - offX1;
+        float p1y = y1 - offY1;
+        float p2x = x2 - offX2;
+        float p2y = y2 - offY2;
+        float p3x = x1 + offX3;
+        float p3y = y1 + offY3;
+        float p4x = x2 + offX4;
+        float p4y = y2 + offY4;
+
+
+        PointF p1 = new PointF(p1x, p1y);
+        PointF p2 = new PointF(p2x, p2y);
+        PointF p3 = new PointF(p3x, p3y);
+        PointF p4 = new PointF(p4x, p4y);
+
+        return new PointF[]{p1, p2, p3, p4};
+    }
+
     public boolean isOutside(PointF p) {
         if (p == null) {
             throw new IllegalArgumentException("point can't be null");
